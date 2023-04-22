@@ -15,7 +15,7 @@ describe("Central de Atendimento ao Cliente TAT", () => {
     user.lastName = faker.name.lastName();
     user.email = faker.internet.exampleEmail(user.firstName, user.lastName);
     user.phone = faker.phone.number();
-    user.areaText = faker.lorem.paragraph();
+    user.areaText = Cypress._.repeat("abcdefghijklmnopqrstuvxz 0123456789", 3);
   });
   it("verify aplication title", () => {
     cy.title().should("eq", "Central de Atendimento ao Cliente TAT");
@@ -26,10 +26,7 @@ describe("Central de Atendimento ao Cliente TAT", () => {
     cy.get("#email").type("Claudia@gmail.com", { delay: 10 });
     cy.get("#phone").type("88908930849");
     cy.get("#open-text-area").type("testando texto");
-    cy.get(".button").click();
-    cy.get(".success")
-      .should("be.visible")
-      .contains("Mensagem enviada com sucesso.");
+    cy.sucessMessageClock();
   });
   it("show error message in send form when email formatation is wrong", () => {
     user.email = "di@.com@";
@@ -72,9 +69,12 @@ describe("Central de Atendimento ao Cliente TAT", () => {
     user.areaText = " ";
     cy.fillMandatoryFieldsAndSubmitAndFail(user);
   });
-  it("successfully submit the form using a custom command", () => {
-    cy.fillMandatoryFieldsAndSubmit(user);
+  Cypress._.times(5, () => {
+    it("successfully submit the form using a custom command", () => {
+      cy.fillMandatoryFieldsAndSubmit(user);
+    });
   });
+
   it("selects a product by its text", () => {
     cy.get("#product").select("youtube");
     cy.get("#product").should("have.value", "youtube");
@@ -138,5 +138,40 @@ describe("Central de Atendimento ao Cliente TAT", () => {
 
   it("access the privacy policy page by removing the target and then clicking on the link", () => {
     cy.get("#privacy a").invoke("removeAttr", "target").click();
+  });
+
+  it("display and hide success and error messages using invoke", () => {
+    cy.get(".success")
+      .should("not.be.visible")
+      .invoke("show")
+      .should("be.visible")
+      .and("contain", "Mensagem enviada com sucesso.")
+      .invoke("hide")
+      .should("not.be.visible");
+
+    cy.get(".error")
+      .should("not.be.visible")
+      .invoke("show")
+      .should("be.visible")
+      .and("contain", "Valide os campos obrigatórios!")
+      .invoke("hide")
+      .should("not.be.visible");
+  });
+
+  it("fills the text area using the invoke command", () => {
+    cy.get("#open-text-area")
+      .invoke("val", user.areaText)
+      .should("have.value", user.areaText);
+  });
+
+  it.only("req http to site in web", () => {
+    cy.request({
+      method: "GET",
+      url: "https://cac-tat.s3.eu-central-1.amazonaws.com/index.html",
+    }).then((res) => {
+      expect(res.status).to.equal(200);
+      expect(res.statusText).to.equal("OK");
+      expect(res.body).contain("CAC TAT");
+    });
   });
 });
