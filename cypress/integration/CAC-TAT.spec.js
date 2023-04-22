@@ -164,7 +164,7 @@ describe("Central de Atendimento ao Cliente TAT", () => {
       .should("have.value", user.areaText);
   });
 
-  it.only("req http to site in web", () => {
+  it("req http to site in web", () => {
     cy.request({
       method: "GET",
       url: "https://cac-tat.s3.eu-central-1.amazonaws.com/index.html",
@@ -173,5 +173,10 @@ describe("Central de Atendimento ao Cliente TAT", () => {
       expect(res.statusText).to.equal("OK");
       expect(res.body).contain("CAC TAT");
     });
+  });
+
+  it.only("test cat is visible", () => {
+    cy.get("#cat").invoke("show").should("be.visible");
+    cy.get("#subtitle").invoke("text", "I 💜 cats");
   });
 });
