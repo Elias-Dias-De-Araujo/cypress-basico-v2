@@ -24,25 +24,25 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 Cypress.Commands.add("fillMandatoryFieldsAndSubmit", (user) => {
-  cy.get("#firstName").type(user.firstName);
-  cy.get("#lastName").type(user.lastName);
-  cy.get("#email").type(user.email, { delay: 10 });
-  cy.get("#phone").type(user.phone);
-  cy.get("#open-text-area").type(user.areaText);
-  cy.get(".button").click();
+  cy.get("#firstName").should("be.visible").type(user.firstName);
+  cy.get("#lastName").should("be.visible").type(user.lastName);
+  cy.get("#email").should("be.visible").type(user.email, { delay: 10 });
+  cy.get("#phone").should("be.visible").type(user.phone);
+  cy.get("#open-text-area").should("be.visible").type(user.areaText);
+  cy.get(".button").should("be.visible").click();
   cy.get(".success")
     .should("be.visible")
     .contains("Mensagem enviada com sucesso.");
 });
 
 Cypress.Commands.add("fillMandatoryFieldsAndSubmitAndFail", (user) => {
-  cy.get("#firstName").type(user.firstName);
-  cy.get("#lastName").type(user.lastName);
-  cy.get("#email").type(user.email, { delay: 10 });
-  cy.get("#phone").type(user.phone);
-  cy.get("#open-text-area").type(user.areaText);
-  cy.get(".button").click();
-  cy.get(".button").click();
+  cy.get("#firstName").should("be.visible").type(user.firstName);
+  cy.get("#lastName").should("be.visible").type(user.lastName);
+  cy.get("#email").should("be.visible").type(user.email, { delay: 10 });
+  cy.get("#phone").should("be.visible").type(user.phone);
+  cy.get("#open-text-area").should("be.visible").type(user.areaText);
+  cy.get(".button").should("be.visible").click();
+  cy.get(".button").should("be.visible").click();
   cy.get(".error")
     .should("be.visible")
     .contains("Valide os campos obrigatórios!");
